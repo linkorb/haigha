@@ -1,9 +1,11 @@
 # Haigha: Alice fixtures for tables
 
+<img src="http://3.bp.blogspot.com/-9_Jt3gdf6fU/T-28_RUpoFI/AAAAAAAACBg/xgAxK-2fgLY/s1600/MarchHare.jpg" style="width: 100%" />
+
 [Alice](https://github.com/nelmio/alice) is great for database fixtures library.
 It works with Doctrine out-of-the-box, but it needs a custom persister if your application uses something else.
 
-This is where Haigha comes in: it lets you use Alice with plain database tables!
+This is where **Haigha** comes in: it lets you use Alice with plain database tables!
 
 ## How to use Haigha in your application
 
