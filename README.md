@@ -3,11 +3,11 @@
 <img src="http://3.bp.blogspot.com/-9_Jt3gdf6fU/T-28_RUpoFI/AAAAAAAACBg/xgAxK-2fgLY/s1600/MarchHare.jpg" style="width: 100%" />
 
 [Alice](https://github.com/nelmio/alice) is an *awesome* database fixtures library.
-It works with Doctrine out-of-the-box, but if you don't use the Doctrine ORM, you'll needs custom persisters...
+It works with Doctrine out-of-the-box, but if you don't use the Doctrine ORM, you'll need custom persisters...
 
 This is where **Haigha** comes in:
 
->> *Haigha lets you use Alice directly with database tables!*
+> *Haigha lets you use Alice directly with database tables!*
 
 ## Features
 
