@@ -5,11 +5,67 @@
 [Alice](https://github.com/nelmio/alice) is great for database fixtures library.
 It works with Doctrine out-of-the-box, but it needs a custom persister if your application uses something else.
 
-This is where **Haigha** comes in: it lets you use Alice with plain database tables!
+This is where **Haigha** comes in: *it lets you use Alice directly with database tables!*
+
+
+## Features
+
+* Supports all standard Alice functionality (ranges, optional data, references, inheritence, etc)
+* Supports Faker data providers
+* Supports any PDO connection
+* No need to write classes, directly persist from yml to your sql database
+
+## Example fixture file
+
+Haigha uses Alice to load fixture files, so the format is identical ([Details](https://github.com/nelmio/alice)). The only thing to keep in mind is that you use tablenames instead of classnames. Prefix your tablenames with `table.`. For example, if your tablename is called `user`, you use it like this:
+```yaml
+table.user:
+  random_user{0..9}:
+    username: <userName()>
+    firstname: <firstName()>
+    lastname: <lastName()>
+    password: <password()>
+    email: <email()>
+```
 
 ## How to use Haigha in your application
 
-Simply add Haigha to your composer.json (in the require-dev section if you only use it for your testsuite).
+Simply add the following to your `require` or `require-dev` section in your [composer.json](http://getcomposer.org) and run `composer update`:
+```json
+"require": {
+  "linkorb/haigha": "~1.0"
+}
+```
+
+You can now use Haigha in your applications, or use the included command-line tool to load fixtures into your database:
+
+## Command-line usage:
+
+```
+./vendor/bin/haigha fixtures:load examples/random_users.yml mydbname
+```
+
+## Library usage:
+
+You can use Haigha in your own application like this:
+
+```php
+// Instantiate a new Alice loader
+$loader = new Nelmio\Alice\Fixtures\Loader();
+
+// Add the Haigha instantiator
+$instantiator = new Haigha\TableRecordInstantiator();
+$loader->addInstantiator($instantiator);
+
+// Load (Haigha) objects from a Alice yml file
+$objects = $loader->load('examples/random_users.yml');
+
+// Instantiate the Haigha PDO persister, and pass a PDO connection
+$persister = new PdoPersister($pdo);
+
+// Persist the Haigha objects on the PDO connection
+$persister->persist($objects);
+```
 
 ## License
 
