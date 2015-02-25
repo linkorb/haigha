@@ -18,9 +18,7 @@
     },
     "require": {
         "rhumsaa/uuid": "~2.0",
-        "nelmio/alice": "dev-master"
-    },
-    "require-dev": {
+        "nelmio/alice": "dev-master",
         "symfony/console": "~2.4",
         "linkorb/database-manager": "dev-master"
     },
