@@ -2,11 +2,12 @@
 
 <img src="http://3.bp.blogspot.com/-9_Jt3gdf6fU/T-28_RUpoFI/AAAAAAAACBg/xgAxK-2fgLY/s1600/MarchHare.jpg" style="width: 100%" />
 
-[Alice](https://github.com/nelmio/alice) is great for database fixtures library.
-It works with Doctrine out-of-the-box, but it needs a custom persister if your application uses something else.
+[Alice](https://github.com/nelmio/alice) is an *awesome* database fixtures library.
+It works with Doctrine out-of-the-box, but if you don't use the Doctrine ORM, you'll needs custom persisters...
 
-This is where **Haigha** comes in: *it lets you use Alice directly with database tables!*
+This is where **Haigha** comes in:
 
+>> *Haigha lets you use Alice directly with database tables!*
 
 ## Features
 
@@ -44,6 +45,8 @@ You can now use Haigha in your applications, or use the included command-line to
 ```
 ./vendor/bin/haigha fixtures:load examples/random_users.yml mydbname
 ```
+
+Note: the command-line tool uses [linkorb/database-manager](https://github.com/linkorb/database-manager) for loading database connection details (server, username, password, etc).
 
 ## Library usage:
 
