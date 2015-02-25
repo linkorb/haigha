@@ -1,0 +1,8 @@
+table.user:
+    
+    random_user{0..9}:
+        username: <userName()>
+        firstname: <firstName()>
+        lastname: <lastName()>
+        password: <password()>
+        email: <email()>

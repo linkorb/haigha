@@ -1,0 +1,33 @@
+
+{
+    "name": "linkorb/haigha",
+    "description": "Alice fixtures for database tables",
+    "keywords": ["alice", "wonderland", "fixtures", "march hare"],
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Joost Faassen",
+            "email": "j.faassen@linkorb.com",
+            "homepage": "http://www.linkorb.com",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/linkorb/haigha/issues"
+    },
+    "require": {
+        "rhumsaa/uuid": "~2.0",
+        "nelmio/alice": "dev-master"
+    },
+    "require-dev": {
+        "symfony/console": "~2.4",
+        "linkorb/database-manager": "dev-master"
+    },
+    "bin": ["bin/haigha"],
+    "autoload": {
+        "psr-4": {
+            "Haigha\\": "src/"
+        }
+    }
+}
