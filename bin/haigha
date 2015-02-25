@@ -2,6 +2,9 @@
 <?php
 
 $filename = __DIR__ . '/../vendor/autoload.php';
+if (!file_exists($filename)) {
+    $filename = __DIR__ . '/../../../autoload.php';
+}
 
 if (!file_exists($filename)) {
     die(
