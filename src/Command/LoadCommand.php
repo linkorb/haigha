@@ -11,6 +11,7 @@ use Nelmio\Alice\Fixtures\Loader as AliceLoader;
 use Haigha\TableRecordInstantiator;
 use Haigha\Persister\PdoPersister;
 use RuntimeException;
+use PDO;
 
 class LoadCommand extends Command
 {
