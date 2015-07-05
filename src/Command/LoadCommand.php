@@ -20,26 +20,36 @@ class LoadCommand extends Command
         ->setName('fixtures:load')
         ->setDescription('Load Alice fixture data into database')
         ->addArgument(
-            'dbname',
-            InputArgument::REQUIRED,
-            'Database name'
-        )
-        ->addArgument(
             'filename',
             InputArgument::REQUIRED,
             'Filename'
+        )
+        ->addArgument(
+            'dburl',
+            InputArgument::REQUIRED,
+            'Database connection details'
         );
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $dbname = $input->getArgument('dbname');
+        $dburl = $input->getArgument('dburl');
         $filename  = $input->getArgument('filename');
         
-        $output->write("Haigha: loading [$filename] into [$dbname]\n");
+        $output->write("Haigha: loading [$filename] into [$dburl]\n");
         
-        $manager = new DatabaseManager();
-        $pdo = $manager->getPdo($dbname, 'default');
+        $urlPart = parse_url($dburl);
+        if (isset($urlPart['host'])) {
+            $dbname = substr($urlPart['path'], 1);
+            $dsn = $urlPart['scheme'] . ':dbname=' . $dbname . ';host=' . $urlPart['host'];
+            $pdo = new PDO($dsn, $urlPart['user'], $urlPart['pass']);
+        } else {
+            // not a propper connection url, use database manager
+            $dbname = $urlPart['path'];
+            $manager = new DatabaseManager();
+            $pdo = $manager->getPdo($dbname, 'default');
+        }
+        
         if (!$pdo) {
             throw new RuntimeException('Invalid database: ' . $dbname);
         }
@@ -50,7 +60,7 @@ class LoadCommand extends Command
         
         $loader = new AliceLoader($locale, $providers, $seed);
         $instantiator = new TableRecordInstantiator();
-        $instantiator->setAutoUuidColumn('r_uuid');
+        //$instantiator->setAutoUuidColumn('r_uuid');
         
         $loader->addInstantiator($instantiator);
         
@@ -58,7 +68,7 @@ class LoadCommand extends Command
         $objects = $loader->load($filename);
 
         $output->write("Persisting " . count($objects) . " objects in database `$dbname`\n");
-        
+        //print_r($objects);
         $persister = new PdoPersister($pdo);
         $persister->persist($objects);
         $output->write("Done\n");
