@@ -43,10 +43,13 @@ You can now use Haigha in your applications, or use the included command-line to
 ## Command-line usage:
 
 ```
-./vendor/bin/haigha fixtures:load examples/random_users.yml mydbname
+./vendor/bin/haigha fixtures:load examples/random_users.yml mysql://username:password@hostname/dbname
 ```
 
-Note: the command-line tool uses [linkorb/database-manager](https://github.com/linkorb/database-manager) for loading database connection details (server, username, password, etc).
+The connection string can be either:
+
+1. A full URL containing username, password, hostname and dbname
+2. Just a dbname. In this case [linkorb/database-manager](https://github.com/linkorb/database-manager) is used for loading database connection details (server, username, password, etc) from .conf files (read project readme for more details).
 
 ## Library usage:
 
