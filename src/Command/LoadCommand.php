@@ -29,13 +29,20 @@ class LoadCommand extends Command
             'dburl',
             InputArgument::REQUIRED,
             'Database connection details'
-        );
+        )
+        ->addArgument(
+            'autouuidfield',
+            InputArgument::OPTIONAL,
+            'Fieldname for automatically generating uuids on all records'
+        )
+        ;
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $dburl = $input->getArgument('dburl');
         $filename  = $input->getArgument('filename');
+        $autoUuidField  = $input->getArgument('autouuidfield');
         
         $output->write("Haigha: loading [$filename] into [$dburl]\n");
         
@@ -61,7 +68,9 @@ class LoadCommand extends Command
         
         $loader = new AliceLoader($locale, $providers, $seed);
         $instantiator = new TableRecordInstantiator();
-        //$instantiator->setAutoUuidColumn('r_uuid');
+        if ($autoUuidField) {
+            $instantiator->setAutoUuidColumn($autoUuidField);
+        }
         
         $loader->addInstantiator($instantiator);
         
