@@ -54,6 +54,11 @@ class PdoPersister implements PersisterInterface
 
             $statement = $this->pdo->prepare($sql);
             $res = $statement->execute($bind);
+            if (!$res) {
+                $err = $statement->errorInfo();
+                $errorMessage = $err[2];
+                throw new RuntimeException("Error: [" . $errorMessage . '] on query [' . $sql . ']');
+            }
         }
     }
     
