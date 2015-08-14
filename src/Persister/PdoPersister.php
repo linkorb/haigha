@@ -10,24 +10,31 @@ use PDO;
 class PdoPersister implements PersisterInterface
 {
     private $pdo;
+
+    /**
+     * @param PDO $pdo
+     */
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
     }
-    
+
+    /**
+     * {@inheritdoc}
+     */
     public function persist(array $objects)
     {
         $tables = array();
-        
+
         foreach ($objects as $object) {
             $tables[$object->__meta('tablename')] = true;
         }
-        
+
         foreach ($tables as $tablename => $value) {
             $statement = $this->pdo->prepare("TRUNCATE " . $tablename);
             $statement->execute();
         }
-        
+
         foreach ($objects as $object) {
             $tablename = $object->__meta('tablename');
             $properties = get_object_vars($object);
@@ -57,11 +64,18 @@ class PdoPersister implements PersisterInterface
             if (!$res) {
                 $err = $statement->errorInfo();
                 $errorMessage = $err[2];
-                throw new RuntimeException("Error: [" . $errorMessage . '] on query [' . $sql . ']');
+                throw new RuntimeException(sprintf(
+                    "Error: '%s' on query '%s'",
+                    $errorMessage,
+                    $sql
+                ));
             }
         }
     }
-    
+
+    /**
+     * {@inheritdoc}
+     */
     public function find($class, $id)
     {
         throw new RuntimeException('find not implemented');

@@ -40,16 +40,27 @@ Simply add the following to your `require` or `require-dev` section in your [com
 
 You can now use Haigha in your applications, or use the included command-line tool to load fixtures into your database:
 
-## Command-line usage:
+## Command-line usage
+
+You can load schema to database by:
+
+### Database url
+
+A full URL containing username, password, hostname and dbname:
 
 ```
 ./vendor/bin/haigha fixtures:load examples/random_users.yml mysql://username:password@hostname/dbname
 ```
 
-The connection string can be either:
+### Just a dbname
 
-1. A full URL containing username, password, hostname and dbname
-2. Just a dbname. In this case [linkorb/database-manager](https://github.com/linkorb/database-manager) is used for loading database connection details (server, username, password, etc) from .conf files (read project readme for more details).
+In this case [linkorb/database-manager](https://github.com/linkorb/database-manager) is used for loading database connection details (server, username, password, etc) from .conf files (read project readme for more details).
+
+In a nutshell - you must have a `database_name.conf` file at `/share/config/database/` as described at [database-manager's documentation](https://github.com/linkorb/database-manager#database-configuration-files).
+
+```bash
+./vendor/bin/haigha fixtures:load examples/random_users.yml dbname
+```
 
 ## Library usage:
 

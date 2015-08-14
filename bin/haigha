@@ -20,7 +20,7 @@ $loader = require $filename;
 
 use Symfony\Component\Console\Application;
 
-$application = new Application('Haigha', '0.0.1');
+$application = new Application('Haigha', '1.1.0');
 $application->setCatchExceptions(true);
 $application->add(new \Haigha\Command\LoadCommand());
 $application->run();
