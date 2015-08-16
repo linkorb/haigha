@@ -17,10 +17,11 @@
         "issues": "https://github.com/linkorb/haigha/issues"
     },
     "require": {
+        "php": ">=5.3",
         "ramsey/uuid": "~2.0",
-        "nelmio/alice": "dev-master",
+        "nelmio/alice": "~2.0",
         "symfony/console": "~2.4",
-        "linkorb/database-manager": "dev-master"
+        "linkorb/database-manager": "~2.0"
     },
     "bin": ["bin/haigha"],
     "autoload": {

@@ -19,6 +19,7 @@ class TableRecordInstantiator implements MethodInterface
     {
         $this->auto_uuid_column = $colum_name;
     }
+
     /**
     * {@inheritDoc}
     */
@@ -28,7 +29,7 @@ class TableRecordInstantiator implements MethodInterface
             return true;
         }
     }
-    
+
     /**
     * {@inheritDoc}
     */
@@ -36,18 +37,18 @@ class TableRecordInstantiator implements MethodInterface
     {
         $tablename = substr($fixture->getClass(), 6);
         $r = new TableRecord($tablename);
-        
+
         if (!isset($this->ids[$tablename])) {
             $this->ids[$tablename] = 1;
         }
         $r->setId($this->ids[$tablename]);
         $this->ids[$tablename]++;
-        
+
         if ($this->auto_uuid_column) {
             $uuid = (string)Uuid::uuid4();
             $r->setR_uuid($uuid);
         }
-        
+
         return $r;
     }
 }
