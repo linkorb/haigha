@@ -15,6 +15,16 @@ class TableRecord
         $this->__meta['tablename'] = $tablename;
     }
 
+    /**
+     * @todo Determine primary field name
+     *
+     * @return string ID
+     */
+    public function __toString()
+    {
+        return (string)$this->id;
+    }
+
     public function __call($key, $params)
     {
         if (substr($key, 0, 3) == 'set') {
