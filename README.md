@@ -20,8 +20,13 @@ This is where **Haigha** comes in:
 
 Haigha uses Alice to load fixture files, so the format is identical ([Details](https://github.com/nelmio/alice)). The only thing to keep in mind is that you use tablenames instead of classnames. Prefix your tablenames with `table.`. For example, if your tablename is called `user`, you use it like this:
 ```yaml
+table.group:
+  group_random_users:
+    name: Random users
+
 table.user:
   random_user{0..9}:
+    group_id: @group_random_users
     username: <userName()>
     firstname: <firstName()>
     lastname: <lastName()>
