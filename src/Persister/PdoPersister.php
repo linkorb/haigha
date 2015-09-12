@@ -22,51 +22,34 @@ class PdoPersister implements PersisterInterface
     /**
      * {@inheritdoc}
      */
-    public function persist(array $objects)
+    public function reset($objects)
     {
-        $tables = array();
-
-        foreach ($objects as $object) {
-            $tables[$object->__meta('tablename')] = true;
-        }
-
-        foreach ($tables as $tablename => $value) {
-            $statement = $this->pdo->prepare("TRUNCATE " . $tablename);
-            $statement->execute();
-        }
-
         foreach ($objects as $object) {
             $tablename = $object->__meta('tablename');
-            $properties = get_object_vars($object);
-            $fields = array();
-            $values = array();
-            $bind = array();
-            foreach ($properties as $field => $value) {
-                $fields[] = $field;
-                $values[] = $value;
-                $bind[':' . $field] = $value;
-            }
-            $sql = "INSERT INTO " . $tablename . " (" . implode($fields, ', ');
-            $sql .= ") VALUES (";
+            $statement = $this->pdo->prepare(sprintf("TRUNCATE `%s`", $tablename));
+            $statement->execute();
+        }
+    }
 
-            $first = true;
-            foreach ($properties as $key => $value) {
-                if (!$first) {
-                    $sql .= ", ";
-                }
-                $sql .= ":" . $key . "";
-                $first = false;
-            }
-            $sql .= ");";
+    /**
+     * {@inheritdoc}
+     */
+    public function persist(array $objects)
+    {
+        foreach ($objects as $object) {
+            $tablename = $object->__meta('tablename');
+            $fields = get_object_vars($object);
+
+            $sql = $this->buildSql($tablename, $fields);
 
             $statement = $this->pdo->prepare($sql);
-            $res = $statement->execute($bind);
+            $res = $statement->execute($fields);
+
             if (!$res) {
                 $err = $statement->errorInfo();
-                $errorMessage = $err[2];
                 throw new RuntimeException(sprintf(
                     "Error: '%s' on query '%s'",
-                    $errorMessage,
+                    $err[2],
                     $sql
                 ));
             }
@@ -79,5 +62,38 @@ class PdoPersister implements PersisterInterface
     public function find($class, $id)
     {
         throw new RuntimeException('find not implemented');
+    }
+
+    /**
+     * @return string
+     */
+    public function buildSql($tablename, $fields)
+    {
+        return sprintf(
+            "INSERT INTO `%s` (%s) VALUES (%s)",
+            $tablename,
+            $this->implodeFieldsNames($fields),
+            $this->implodeBindNames($fields)
+        );
+    }
+
+    /**
+     * @param  array $fields
+     * @return string
+     */
+    private function implodeFieldsNames($fields)
+    {
+        $fields_names = array_keys($fields);
+        return "`" . implode($fields_names, "`, `") . "`";
+    }
+
+    /**
+     * @param  array $fields
+     * @return string
+     */
+    private function implodeBindNames($fields)
+    {
+        $fields_names = array_keys($fields);
+        return ":" . implode($fields_names, ", :");
     }
 }
