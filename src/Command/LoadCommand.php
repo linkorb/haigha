@@ -42,6 +42,13 @@ class LoadCommand extends Command
                 'Fieldname for automatically generating uuids on all records'
             )
             ->addOption(
+                'append',
+                'a',
+                InputOption::VALUE_NONE,
+                'Do not reset DB schema before loading fixtures',
+                null
+            )
+            ->addOption(
                 'locale',
                 'l',
                 InputOption::VALUE_REQUIRED,
@@ -99,6 +106,9 @@ class LoadCommand extends Command
         ));
 
         $persister = new PdoPersister($pdo);
+        if (!is_null($input->getOption('append'))) {
+            $persister->reset($objects);
+        }
         $persister->persist($objects);
 
         $output->writeln("Done");

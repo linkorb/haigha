@@ -89,6 +89,20 @@ $persister = new PdoPersister($pdo);
 $persister->persist($objects);
 ```
 
+## Test
+
+Customize `phpunit.xml`:
+
+```
+cp phpunit.xml.dist phpunit.xml
+```
+
+Run:
+
+```
+vendor/bin/phpunit
+```
+
 ## License
 
 MIT (see [LICENSE.md](LICENSE.md))

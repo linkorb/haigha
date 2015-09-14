@@ -23,10 +23,18 @@
         "symfony/console": "~2.4",
         "linkorb/database-manager": "~2.0"
     },
+    "require-dev": {
+        "phpunit/phpunit": "~4.6"
+    },
     "bin": ["bin/haigha"],
     "autoload": {
         "psr-4": {
             "Haigha\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Haigha\\Tests\\": "tests/"
         }
     }
 }
