@@ -3,6 +3,7 @@
 namespace Haigha\Tests\Persister;
 
 use Haigha\Persister\PdoPersister;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
  * Test class for PdoPersister
@@ -12,6 +13,7 @@ use Haigha\Persister\PdoPersister;
 class PdoPersisterTest extends \PHPUnit_Framework_TestCase
 {
     private $persister;
+    private $output;
 
     public function setUp()
     {
@@ -19,8 +21,8 @@ class PdoPersisterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock()
         ;
-
-        $this->persister = new PdoPersister($pdo);
+        $this->output = new BufferedOutput();
+        $this->persister = new PdoPersister($pdo, $this->output);
     }
 
     public function testBuildSql()
