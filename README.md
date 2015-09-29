@@ -22,6 +22,7 @@ Haigha uses Alice to load fixture files, so the format is identical ([Details](h
 ```yaml
 table.group:
   group_random_users:
+    id: 1 # This is important for version ~2.0
     name: Random users
 
 table.user:

@@ -36,6 +36,13 @@ class LoadCommand extends Command
                 InputArgument::REQUIRED,
                 'Database connection details'
             )
+            ->addOption(
+                'dry-run',
+                'd',
+                InputOption::VALUE_NONE,
+                'Do not run any SQL query - just pass to output',
+                null
+            )
             ->addArgument(
                 'autouuidfield',
                 InputArgument::OPTIONAL,
@@ -105,7 +112,7 @@ class LoadCommand extends Command
             $dburl
         ));
 
-        $persister = new PdoPersister($pdo);
+        $persister = new PdoPersister($pdo, $output, $input->getOption('dry-run'));
         if (!is_null($input->getOption('append'))) {
             $persister->reset($objects);
         }

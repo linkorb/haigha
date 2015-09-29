@@ -3,6 +3,7 @@
 namespace Haigha;
 
 use RuntimeException;
+use Exception;
 
 class TableRecord
 {
@@ -22,7 +23,11 @@ class TableRecord
      */
     public function __toString()
     {
-        return (string)$this->id;
+        try {
+            return (string)$this->id;
+        } catch (Exception $exception) {
+            return '';
+        }
     }
 
     public function __call($key, $params)

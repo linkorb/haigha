@@ -10,13 +10,17 @@ use PDO;
 class PdoPersister implements PersisterInterface
 {
     private $pdo;
+    private $output;
+    private $dryRun;
 
     /**
      * @param PDO $pdo
      */
-    public function __construct(PDO $pdo)
+    public function __construct(PDO $pdo, $output, $dryRun = false)
     {
         $this->pdo = $pdo;
+        $this->output = $output;
+        $this->dryRun = $dryRun;
     }
 
     /**
@@ -26,7 +30,15 @@ class PdoPersister implements PersisterInterface
     {
         foreach ($objects as $object) {
             $tablename = $object->__meta('tablename');
-            $statement = $this->pdo->prepare(sprintf("TRUNCATE `%s`", $tablename));
+            $sql = sprintf("TRUNCATE `%s`", $tablename);
+
+            if ($this->dryRun) {
+                $this->output->writeln(sprintf("Will be executed: %s", $sql));
+                continue;
+            }
+
+            $this->output->writeln(sprintf("Executing: %s", $sql));
+            $statement = $this->pdo->prepare($sql);
             $statement->execute();
         }
     }
@@ -41,6 +53,19 @@ class PdoPersister implements PersisterInterface
             $fields = get_object_vars($object);
 
             $sql = $this->buildSql($tablename, $fields);
+
+            if ($this->dryRun) {
+                $this->output->writeln(sprintf(
+                    "Will be executed: %s",
+                    $this->getExpectedSqlQuery($sql, $fields)
+                ));
+                continue;
+            }
+
+            $this->output->writeln(sprintf(
+                "Executing: %s",
+                $this->getExpectedSqlQuery($sql, $fields)
+            ));
 
             $statement = $this->pdo->prepare($sql);
             $res = $statement->execute($fields);
@@ -95,5 +120,14 @@ class PdoPersister implements PersisterInterface
     {
         $fields_names = array_keys($fields);
         return ":" . implode($fields_names, ", :");
+    }
+
+    public function getExpectedSqlQuery($sql, $fields)
+    {
+        foreach ($fields as $key=>$value) {
+            $key = preg_quote($key);
+            $sql = preg_replace("/:$key/", $value, $sql);
+        }
+        return $sql;
     }
 }
