@@ -28,8 +28,12 @@ class PdoPersister implements PersisterInterface
      */
     public function reset($objects)
     {
+        $truncated = array();
         foreach ($objects as $object) {
             $tablename = $object->__meta('tablename');
+            if (in_array($tablename, $truncated, true)) {
+                continue;
+            }
             $sql = sprintf("TRUNCATE `%s`", $tablename);
 
             if ($this->dryRun) {
@@ -40,6 +44,7 @@ class PdoPersister implements PersisterInterface
             $this->output->writeln(sprintf("Executing: %s", $sql));
             $statement = $this->pdo->prepare($sql);
             $statement->execute();
+            $truncated[] = $tablename;
         }
     }
 
