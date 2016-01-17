@@ -34,6 +34,8 @@ class PdoPersister implements PersisterInterface
             if (in_array($tablename, $truncated, true)) {
                 continue;
             }
+            $truncated[] = $tablename;
+
             $sql = sprintf("TRUNCATE `%s`", $tablename);
 
             if ($this->dryRun) {
@@ -44,7 +46,6 @@ class PdoPersister implements PersisterInterface
             $this->output->writeln(sprintf("Executing: %s", $sql));
             $statement = $this->pdo->prepare($sql);
             $statement->execute();
-            $truncated[] = $tablename;
         }
     }
 
@@ -53,37 +54,92 @@ class PdoPersister implements PersisterInterface
      */
     public function persist(array $objects)
     {
+        $tasks = array();
+        $count = 0;
+
+        // collect all records
         foreach ($objects as $object) {
             $tablename = $object->__meta('tablename');
             $fields = get_object_vars($object);
 
-            $sql = $this->buildSql($tablename, $fields);
-
-            if ($this->dryRun) {
-                $this->output->writeln(sprintf(
-                    "Will be executed: %s",
-                    $this->getExpectedSqlQuery($sql, $fields)
-                ));
-                continue;
+            if (!isset($tasks[$tablename])) {
+                $tasks[$tablename] = array(
+                    'fields' => $this->implodeFieldsNames($fields),
+                    'rawfields' => $fields,
+                    'sql' => array(),
+                    'params' => array(),
+                );
             }
 
-            $this->output->writeln(sprintf(
-                "Executing: %s",
-                $this->getExpectedSqlQuery($sql, $fields)
-            ));
-
-            $statement = $this->pdo->prepare($sql);
-            $res = $statement->execute($fields);
-
-            if (!$res) {
-                $err = $statement->errorInfo();
-                throw new RuntimeException(sprintf(
-                    "Error: '%s' on query '%s'",
-                    $err[2],
-                    $sql
-                ));
+            $sql = array();
+            $params = array();
+            // insert known fields in the right order
+            foreach ($tasks[$tablename]['rawfields'] as $field => $dummy) {
+                if (isset($fields[$field])) {
+                    $params[$field.$count] = $fields[$field];
+                    $sql[] = ':'.$field.$count;
+                } else {
+                    $sql[] = 'DEFAULT';
+                }
             }
+
+            // add newly found fields for this table if any
+            foreach (array_diff_key($fields, $tasks[$tablename]['rawfields']) as $newKey => $value) {
+                $params[$newKey.$count] = $value;
+                $sql[] = ':' . $newKey.$count;
+
+                // add DEFAULT value for the new fields to the previous records
+                foreach ($tasks[$tablename]['sql'] as $index => $dummy) {
+                    $tasks[$tablename]['sql'][$index] = substr($tasks[$tablename]['sql'][$index], 0, -1) . ', DEFAULT)';
+                }
+
+                // define the new field in the known ones
+                $tasks[$tablename]['fields'] .= ', `' . $newKey . '`';
+                $tasks[$tablename]['rawfields'][$newKey] = true;
+            }
+            $count++;
+
+            $tasks[$tablename]['sql'][] = '('.implode(', ', $sql).')';
+            $tasks[$tablename]['params'] = array_merge($tasks[$tablename]['params'], $params);
         }
+
+        // insert records
+        $this->pdo->beginTransaction();
+        try {
+            foreach ($tasks as $table => $task) {
+                $sql = 'INSERT INTO `' . $table . '` (' . $task['fields'] . ') VALUES ' . implode(",\n", $task['sql']);
+                $params = $task['params'];
+
+                if ($this->dryRun) {
+                    $this->output->writeln(sprintf(
+                        "Will be executed: %s",
+                        $this->getExpectedSqlQuery($sql, $params)
+                    ));
+                    continue;
+                }
+
+                $this->output->writeln(sprintf(
+                    "Executing: %s",
+                    $this->getExpectedSqlQuery($sql, $params)
+                ));
+
+                $statement = $this->pdo->prepare($sql);
+                $res = $statement->execute($params);
+
+                if (!$res) {
+                    $err = $statement->errorInfo();
+                    throw new RuntimeException(sprintf(
+                        "Error: '%s' on query '%s'",
+                        $err[2],
+                        $sql
+                    ));
+                }
+            }
+        } catch (\Exception $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
+        $this->pdo->commit();
     }
 
     /**
@@ -95,19 +151,6 @@ class PdoPersister implements PersisterInterface
     }
 
     /**
-     * @return string
-     */
-    public function buildSql($tablename, $fields)
-    {
-        return sprintf(
-            "INSERT INTO `%s` (%s) VALUES (%s)",
-            $tablename,
-            $this->implodeFieldsNames($fields),
-            $this->implodeBindNames($fields)
-        );
-    }
-
-    /**
      * @param  array $fields
      * @return string
      */
@@ -115,16 +158,6 @@ class PdoPersister implements PersisterInterface
     {
         $fields_names = array_keys($fields);
         return "`" . implode($fields_names, "`, `") . "`";
-    }
-
-    /**
-     * @param  array $fields
-     * @return string
-     */
-    private function implodeBindNames($fields)
-    {
-        $fields_names = array_keys($fields);
-        return ":" . implode($fields_names, ", :");
     }
 
     public function getExpectedSqlQuery($sql, $fields)
