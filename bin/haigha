@@ -1,6 +1,9 @@
 #!/usr/bin/env php
 <?php
 
+use Symfony\Component\Console\Application;
+use Symfony\Component\Dotenv\Dotenv;
+
 date_default_timezone_set('UTC');
 
 $filename = __DIR__ . '/../vendor/autoload.php';
@@ -18,7 +21,11 @@ if (!file_exists($filename)) {
 
 $loader = require $filename;
 
-use Symfony\Component\Console\Application;
+$filename = '.env';
+if (file_exists($filename)) {
+    $dotenv = new Dotenv();
+    $dotenv->load($filename);
+}
 
 $application = new Application('Haigha', '1.1.0');
 $application->setCatchExceptions(true);

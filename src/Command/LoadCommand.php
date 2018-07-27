@@ -32,9 +32,9 @@ class LoadCommand extends Command
                 'Filename'
             )
             ->addArgument(
-                'dburl',
-                InputArgument::REQUIRED,
-                'Database connection details'
+                'url',
+                InputArgument::OPTIONAL,
+                'Database connection url'
             )
             ->addOption(
                 'dry-run',
@@ -77,7 +77,13 @@ class LoadCommand extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $dburl = $input->getArgument('dburl');
+        $dburl = $input->getArgument('url');
+        if (!$dburl) {
+            $dburl = getenv('PDO');
+        }
+        if (!$dburl) {
+            throw new RuntimeException("Database URL unspecified. Either pass as an argument, or configure your PDO environment variable.");
+        }
         $filename  = $input->getArgument('filename');
         $autoUuidField  = $input->getArgument('autouuidfield');
         $locale = $input->getOption('locale');
