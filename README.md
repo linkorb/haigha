@@ -19,6 +19,7 @@ This is where **Haigha** comes in:
 ## Example fixture file
 
 Haigha uses Alice to load fixture files, so the format is identical ([Details](https://github.com/nelmio/alice)). The only thing to keep in mind is that you use tablenames instead of classnames. Prefix your tablenames with `table.`. For example, if your tablename is called `user`, you use it like this:
+
 ```yaml
 table.group:
   group_random_users:
@@ -38,6 +39,7 @@ table.user:
 ## How to use Haigha in your application
 
 Simply add the following to your `require` or `require-dev` section in your [composer.json](http://getcomposer.org) and run `composer update`:
+
 ```json
 "require": {
   "linkorb/haigha": "^2.0"
