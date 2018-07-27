@@ -48,11 +48,15 @@ You can now use Haigha in your applications, or use the included command-line to
 
 ## Command-line usage
 
-You can load schema to database by:
+The haigha command-line tool knows one sub-command: `fixtures:load`.
 
-### Database url
+The first argument is the filename of your fixture definition (yaml).
 
-A full URL containing username, password, hostname and dbname:
+The second argument is the (optional) database url. If no database url is specified, haigha used your `PDO` environment variable instead.
+
+### Database URL
+
+A full URL containing username, password, hostname and dbname. For example:
 
 ```
 ./vendor/bin/haigha fixtures:load examples/random_users.yml mysql://username:password@hostname/dbname
