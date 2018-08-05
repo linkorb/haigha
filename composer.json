@@ -1,4 +1,3 @@
-
 {
     "name": "linkorb/haigha",
     "description": "Alice fixtures for database tables",
@@ -17,15 +16,15 @@
         "issues": "https://github.com/linkorb/haigha/issues"
     },
     "require": {
-        "php": ">=5.3",
+        "php": "^7.1",
         "symfony/dotenv": "^4.0",
         "ramsey/uuid": "^2.0|^3.0",
-        "nelmio/alice": "^2.0",
-        "symfony/console": "^2.4|^3.0|^4.0",
+        "nelmio/alice": "^3.0",
+        "symfony/console": "^4.1",
         "linkorb/database-manager": "^2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.6"
+        "phpunit/phpunit": "^5"
     },
     "bin": ["bin/haigha"],
     "autoload": {
