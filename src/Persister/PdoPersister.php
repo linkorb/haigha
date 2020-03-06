@@ -157,7 +157,7 @@ class PdoPersister implements PersisterInterface
     private function implodeFieldsNames($fields)
     {
         $fields_names = array_keys($fields);
-        return "`" . implode($fields_names, "`, `") . "`";
+        return "`" . implode("`, `", $fields_names) . "`";
     }
 
     public function getExpectedSqlQuery($sql, $fields)
