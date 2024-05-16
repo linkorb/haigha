@@ -1,3 +1,6 @@
+> [!TIP]
+> Haigha has been superseeded by the brand new [Hatter](https://github.com/linkorb/haigha) - similar features, still application independant, but no longer trying to use Alice in a way that it wasn't designed for. 
+
 # Haigha: Alice fixtures for tables
 
 <img src="http://3.bp.blogspot.com/-9_Jt3gdf6fU/T-28_RUpoFI/AAAAAAAACBg/xgAxK-2fgLY/s1600/MarchHare.jpg" style="width: 100%" />
